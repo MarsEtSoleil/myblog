@@ -1,0 +1,224 @@
+
+<!DOCTYPE html>
+<html>
+<head><title>Animated Trochoid Spirograph</title>
+<meta http-equiv="Content-Type" content="text/html;CHARSET=utf-8">
+<script type="text/javascript">
+var canvas, context;
+var width = 400, height = 400;
+var r1 = 200, r2 = 73, r3 = 33; // 半径の設定
+var time = 0; // 描画を進めるための時間変数
+var cx, cy; // キャンバスの中心
+var angleIncrement = 0.05; // 動きの細かさを制御
+var col;
+var stop = false;
+var counter = 0;
+var lim = 175;
+
+//Mobile用タッチイベント処理
+var movefun = function( event ){
+	event.preventDefault();
+}
+
+function getPageX(e) {
+	var pageX = 0;
+	if (e.originalEvent.touches) {
+		pageX = e.originalEvent.touches[0].pageX;
+	} else {
+		pageX = e.pageX;
+	}
+	return pageX;
+}
+
+function getPageY(e) {
+	var pageY = 0;
+	if (e.originalEvent.touches) {
+		pageY = e.originalEvent.touches[0].pageY;
+	} else {
+		pageY = e.pageY;
+	}
+	return pageY;
+}
+
+function initialize() {
+	if (navigator.userAgent.match(/iPhone|Android.+/)) {
+		mobile = true;
+	} else {
+		mobile = false;
+	}
+
+	console.log("mobile?" + mobile);
+
+	if (mobile) {
+		width = Math.floor(window.innerWidth * 100 / 100);
+		height = Math.floor(window.innerHeight * 100 / 100);
+		pref_screen = width;
+	} else {
+		width = 400;
+		height = 400;
+	}
+
+	canvas = document.getElementById('canvas');
+	context = canvas.getContext('2d');
+	canvas.width = width;
+	canvas.height = height;
+
+	// キャンバスの中心を取得
+	cx = width / 2;
+	cy = height / 2;
+
+	// 背景色を設定
+	context.fillStyle = "white";
+	context.fillRect(0, 0, width, height);
+
+	// 描画を開始
+	r_setting();
+	//spiroInit();
+	col = getcolour(lim);//最初の色
+	draw();//
+}
+function spiroInit() {
+	// r1 は，外側のリングの大きさ
+	var size = Math.floor(width / 2);
+	r1 = size;
+	// r2 は，中の歯車の大きさ
+	r2 = (r1 * Math.random() * 0.9 + r1 * 0.05) | 0;
+	// r3 は，歯車の中でペンを入れる穴の位置
+	r3 = (r2 * Math.random() * 0.9 + r2 * 0.05) | 0;
+
+	// ペンの色を決める．
+	col = getcolour(lim);
+	document.getElementById("r1").innerHTML = r1;
+	document.getElementById("r2").innerHTML = r2;
+	document.getElementById("r3").innerHTML = r3;
+	
+	counter = 0;
+	context.clearRect(0, 0, width, height);
+}
+
+function getcolour(limit) {
+	var clr = ((Math.random() * (255 - limit)) | 0) + limit;
+	var clg = ((Math.random() * (255 - limit)) | 0) + limit;
+	var clb = ((Math.random() * (255 - limit)) | 0) + limit;
+	var rgb = "rgb(" + clr + ", " + clg + ", " + clb + ")";
+	document.getElementById("memo").innerHTML = rgb;
+	return rgb;
+}
+
+function xypos(t) {
+	var PI = Math.PI;
+
+	// トロコイド式に基づく x, y 座標の計算
+	var x = (r1 - r2) * Math.cos(t) + r3 * Math.cos((r1 - r2) / r2 * t) + cx;
+	var y = (r1 - r2) * Math.sin(t) - r3 * Math.sin((r1 - r2) / r2 * t) + cy;
+
+	return { "x": x, "y": y };
+}
+
+function draw() {
+	if (stop) return;
+	// 描画スタイルを設定
+	context.strokeStyle = col;
+	context.lineWidth = 1;
+	
+	if (counter % 20 == 0) {
+		col = getcolour(lim);
+	}
+	
+	if (counter % 200 == 0) {
+		//spiroInit();
+	}
+
+	// トロコイドの位置を計算して線を引く
+	context.beginPath();
+	var p = xypos(time);
+	context.moveTo(p.x, p.y);
+
+	// 小刻みに線を描き続ける
+	for (var i = 0; i < 100; i++) { // 100ステップずつ描画
+		time += angleIncrement; // 時間を少しずつ進める
+		p = xypos(time);
+		context.lineTo(p.x, p.y);
+	}
+
+	context.stroke();
+	document.getElementById("cnt").innerHTML = counter;
+	counter++;
+	// 次のフレームを設定
+	requestAnimationFrame(draw);
+}
+
+var stop = 0;
+function r_setting(){
+	document.getElementById("r1").value = r1;
+	document.getElementById("r2").value = r2;
+	document.getElementById("r3").value = r3;
+}
+function r_change(){
+	counter = 0;
+	context.clearRect(0, 0, width, height);
+	r1 = Number(document.getElementById("r1").value);
+	r2 = Number(document.getElementById("r2").value);
+	r3 = Number(document.getElementById("r3").value);
+	lim = Number(document.getElementById("lim").value);
+}
+function kiroku(){
+	var k1 = document.getElementById("r1").value;
+	var k2 = document.getElementById("r2").value;
+	var k3 = document.getElementById("r3").value;
+	document.getElementById("kiroku").value += k1+","+k2+","+k3+"\n"
+}
+function fromkiroku(){
+	var index = Number(document.getElementById("setnum").value)-1;
+	var gyou = document.getElementById("kiroku").value.split("\n")[index];
+	var r1 = gyou.split(",")[0];
+	var r2 = gyou.split(",")[1];
+	var r3 = gyou.split(",")[2];
+	document.getElementById("r1").value = r1;
+	document.getElementById("r2").value = r2;
+	document.getElementById("r3").value = r3;
+	r_change();
+}
+</script>
+</head>
+<body onload="initialize();">
+<center>
+<table style="text-align:center"><tr><td>
+<canvas id="canvas" width="" height=""></canvas>
+</td></tr>
+<tr><td>
+<input type="button" value="stop" onclick="stop=1;">&nbsp;
+<input type="button" value="resume" onclick="stop=0;draw();">
+<input type="button" value="kiroku" onclick="kiroku();">
+</td></tr>
+<tr><td>
+r1=<input type="text" size=5 id="r1" value=200>&nbsp;
+r2=<input type="text" size=5 id="r2" value=73>&nbsp;
+r3=<input type="text" size=5 id="r3" value=33>&nbsp;
+cl=<input type="text" size=5 id="lim" value=175>
+<input type="button" value="set" onclick="r_change();">
+<br>
+<span id="cnt"></span>
+</td></tr>
+</table>
+<div id="memo"></div>
+<hr>r1は200固定，r2とr3を1～199で設定しましょう．物理的にはr2>r3です．<br>
+clは色（rgb）の範囲でcl～255の値になります．<br>
+この<a href="https://nazology.kusuguru.co.jp/archives/133826/2">link</a>のトロコイド式を参考にさせていただいてます．<br>
+一定時間で色（淡い色）が変わります．
+<hr>
+<input type="button" value="set" onclick="fromkiroku();">
+<input type="text" id="setnum" value="1" size=5>
+<br>
+<textarea id="kiroku" cols=60 rows=6>
+200,135,121
+200,126,109
+200,58,45
+200,109,62
+83,115,155
+83,125,155
+83,125,55
+</textarea>
+</center>
+</body>
+</html>
