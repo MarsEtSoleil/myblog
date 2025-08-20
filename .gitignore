@@ -1,0 +1,10 @@
+# Node.js
+node_modules/
+npm-debug.log
+.DS_Store
+
+# SQLite DB ファイル
+*.db
+
+# Render が生成する一時ファイルなど
+.env

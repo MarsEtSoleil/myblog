@@ -8,12 +8,63 @@ const querystring = require('querystring');
 const fs = require('fs');
 const multiparty = require('multiparty');
 
+const dbPath = '/mnt/data/myblog.db';
+
 const dbPath = path.join(__dirname, 'myblog.db');
 const uploadDir = path.join(__dirname, 'photos'); // 写真保存
 
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }
+
+db.serialize(() => {
+  // 履歴テーブル
+  db.run(`CREATE TABLE IF NOT EXISTS rireki (
+    key INTEGER PRIMARY KEY AUTOINCREMENT,
+    id TEXT,
+    name TEXT,
+    title TEXT,
+    date TEXT,
+    comments TEXT,
+    photo TEXT
+  )`);
+
+  // 会員テーブル
+  db.run(`CREATE TABLE IF NOT EXISTS member (
+    key INTEGER PRIMARY KEY AUTOINCREMENT,
+    id TEXT,
+    name TEXT,
+    pass TEXT
+  )`);
+
+  // rireki の初期レコード
+  db.get("SELECT COUNT(*) AS cnt FROM rireki", (err, row) => {
+    if (err) {
+      console.error("Error checking rireki table:", err);
+    } else if (row.cnt === 0) {
+      db.run(`INSERT INTO rireki (id, name, title, date, comments, photo)
+              VALUES (?, ?, ?, ?, ?, ?)`,
+        ["init", "管理者", "最初の投稿", new Date().toISOString(), "ここからスタートです", "white.png"]
+      );
+      console.log("初期レコードを追加しました (rireki)");
+    }
+  });
+
+  // member の初期レコード
+  db.get("SELECT COUNT(*) AS cnt FROM member", (err, row) => {
+    if (err) {
+      console.error("Error checking member table:", err);
+    } else if (row.cnt === 0) {
+      db.run(`INSERT INTO member (id, name, pass)
+              VALUES (?, ?, ?)`,
+        ["admin", "管理者", "admin"]
+      );
+      console.log("初期レコードを追加しました (member)");
+    }
+  });
+});
+
+module.exports = db;
 
 // ============ サーバ本体 ============
 const server = http.createServer(function(req, res) {
@@ -641,6 +692,7 @@ git push -u origin main
 git push -f origin main
 
 git init
+git add .
 
 git commit -m "first commit"
 git branch -M main
