@@ -49,7 +49,6 @@ db.serialize(() => {
       );
     }
   });
-});
 
   // member の初期レコード
   db.get("SELECT COUNT(*) AS cnt FROM member", (err, row) => {
@@ -64,8 +63,6 @@ db.serialize(() => {
     }
   });
 });
-
-module.exports = db;
 
 // ============ サーバ本体 ============
 const server = http.createServer(function(req, res) {
