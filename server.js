@@ -7,15 +7,14 @@ const url = require('url');
 const querystring = require('querystring');
 const fs = require('fs');
 const multiparty = require('multiparty');
-
+const db = new sqlite3.Database('myblog.db');
 const dbPath = path.join(__dirname, 'myblog.db');
 const uploadDir = path.join(__dirname, 'photos'); // 写真保存
 
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }
-const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('myblog.db');
+
 /*
 git add .
 git commit -m "Init with sqlite auto-create tables"
