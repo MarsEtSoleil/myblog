@@ -62,6 +62,41 @@ db.serialize(() => {
       console.log("初期レコードを追加しました (member)");
     }
   });
+  
+const sqls1 = [
+"insert into rireki (id, name, title, date, comments, photo) values('admin', '管理者', '宝塚星組公演', '2025-05-27-16-52', '阿修羅城の瞳\n礼真琴サヨナラ公演\n次期トップ暁千星が娘役', 'P1150309.JPG');",
+"insert into rireki (id, name, title, date, comments, photo) values('0011', '天音', '軽音', '2025-06-04-07-30', 'ナナのリード', 'P1140464.JPG');",
+"insert into rireki (id, name, title, date, comments, photo) values('admin', '管理者', 'ヴェルサイユの薔薇', '2025-06-04-08-33', '宝塚劇場にて', 'P1150299.JPG');",
+"insert into rireki (id, name, title, date, comments, photo) values('admin', '管理者', '星組新トップ', '2025-06-04-09-29', '暁 千星\nChisei AKaTSUKI', 'P1150329.JPG');",
+"insert into rireki (id, name, title, date, comments, photo) values('0011', '天音', 'session', '2025-06-07-15-47', 'kawaii', 'P1130327.JPG');",
+"insert into rireki (id, name, title, date, comments, photo) values('0007', 'Mana', 'ピーター', '2025-08-12-13-24', 'ウェンディ・リリー', 'peterpan.png');",
+"insert into rireki (id, name, title, date, comments, photo) values('0007', 'Mana', '月組　ガイズ＆ドールズ', '2025-08-15-11-43', 'サラブラウン役は天紫珠李（あましじゅり）', 'P1190445.JPG');",
+"insert into rireki (id, name, title, date, comments, photo) values('0007', 'Mana', 'roll cake', '2025-08-16-13-15', 'うまそう', 'nishi.gif');",
+"insert into rireki (id, name, title, date, comments, photo) values('0001', '美伽', '大文字', '2025-08-19-17-36', '昨年8/16送り火', 'P1010652.JPG');"
+];
+const sqls2 = [
+"insert into member (id, name, pass) values ('0001', '美伽', '123456');",
+"insert into member (id, name, pass) values ('0007', 'Mana', '777777');",
+"insert into member (id, name, pass) values ('0011', '天音', '123');"
+];
+sqls1.forEach(sql => {
+  db.run(sql, (err) => {
+    if (err) {
+      console.error("insert error:", err.message);
+    } else {
+      console.log("実行:", sql);
+    }
+  });
+});
+sqls2.forEach(sql => {
+  db.run(sql, (err) => {
+    if (err) {
+      console.error("insert error:", err.message);
+    } else {
+      console.log("実行:", sql);
+    }
+  });
+});
 });
 
 // ============ サーバ本体 ============
