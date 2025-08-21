@@ -39,6 +39,7 @@ db.serialize(() => {
     pass TEXT
   )`);
 
+/*
   // データがまだ無ければ white.png を登録
   db.get("SELECT COUNT(*) as cnt FROM rireki", (err, row) => {
     if (row.cnt === 0) {
@@ -62,9 +63,10 @@ db.serialize(() => {
       console.log("初期レコードを追加しました (member)");
     }
   });
-  
+*/
 const sqls1 = [
-"insert into rireki (id, name, title, date, comments, photo) values('admin', '管理者', '宝塚星組公演', '2025-05-27-16-52', '阿修羅城の瞳\n礼真琴サヨナラ公演\n次期トップ暁千星が娘役', 'P1150309.JPG');",
+"insert into rireki (id, name, title, date, comments, photo) values('admin', '管理者', 'ようこそ！', '2025-05-06-00-00', '画像掲示板開設しました', 'white.png');",
+"insert into rireki (id, name, title, date, comments, photo) values('admin', '管理者', '宝塚星組公演', '2025-06-22-16-52', '阿修羅城の瞳\n礼真琴サヨナラ公演\n次期トップ暁千星が娘役', 'P1150309.JPG');",
 "insert into rireki (id, name, title, date, comments, photo) values('0011', '天音', '軽音', '2025-06-04-07-30', 'ナナのリード', 'P1140464.JPG');",
 "insert into rireki (id, name, title, date, comments, photo) values('admin', '管理者', 'ヴェルサイユの薔薇', '2025-06-04-08-33', '宝塚劇場にて', 'P1150299.JPG');",
 "insert into rireki (id, name, title, date, comments, photo) values('admin', '管理者', '星組新トップ', '2025-06-04-09-29', '暁 千星\nChisei AKaTSUKI', 'P1150329.JPG');",
@@ -75,6 +77,7 @@ const sqls1 = [
 "insert into rireki (id, name, title, date, comments, photo) values('0001', '美伽', '大文字', '2025-08-19-17-36', '昨年8/16送り火', 'P1010652.JPG');"
 ];
 const sqls2 = [
+"insert into member (id, name, pass) values ('admin', '管理者', 'admin');",
 "insert into member (id, name, pass) values ('0001', '美伽', '123456');",
 "insert into member (id, name, pass) values ('0007', 'Mana', '777777');",
 "insert into member (id, name, pass) values ('0011', '天音', '123');"
