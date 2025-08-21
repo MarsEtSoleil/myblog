@@ -8,8 +8,6 @@ const querystring = require('querystring');
 const fs = require('fs');
 const multiparty = require('multiparty');
 
-const dbPath = '/mnt/data/myblog.db';
-
 const dbPath = path.join(__dirname, 'myblog.db');
 const uploadDir = path.join(__dirname, 'photos'); // 写真保存
 
