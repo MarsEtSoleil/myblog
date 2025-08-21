@@ -16,9 +16,11 @@ const uploadDir = path.join(__dirname, 'photos'); // 写真保存
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }
+const sqlite3 = require('sqlite3').verbose();
+const db = new sqlite3.Database('myblog.db');
 
+// 初期テーブル作成
 db.serialize(() => {
-  // 履歴テーブル
   db.run(`CREATE TABLE IF NOT EXISTS rireki (
     key INTEGER PRIMARY KEY AUTOINCREMENT,
     id TEXT,
@@ -29,7 +31,6 @@ db.serialize(() => {
     photo TEXT
   )`);
 
-  // 会員テーブル
   db.run(`CREATE TABLE IF NOT EXISTS member (
     key INTEGER PRIMARY KEY AUTOINCREMENT,
     id TEXT,
@@ -37,18 +38,17 @@ db.serialize(() => {
     pass TEXT
   )`);
 
-  // rireki の初期レコード
-  db.get("SELECT COUNT(*) AS cnt FROM rireki", (err, row) => {
-    if (err) {
-      console.error("Error checking rireki table:", err);
-    } else if (row.cnt === 0) {
-      db.run(`INSERT INTO rireki (id, name, title, date, comments, photo)
-              VALUES (?, ?, ?, ?, ?, ?)`,
-        ["init", "管理者", "最初の投稿", new Date().toISOString(), "ここからスタートです", "white.png"]
+  // データがまだ無ければ white.png を登録
+  db.get("SELECT COUNT(*) as cnt FROM rireki", (err, row) => {
+    if (row.cnt === 0) {
+      db.run(
+        `INSERT INTO rireki (id, name, title, date, comments, photo) 
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        ["admin", "管理者", "最初の投稿", new Date().toISOString(), "サンプルコメント", "white.png"]
       );
-      console.log("初期レコードを追加しました (rireki)");
     }
   });
+});
 
   // member の初期レコード
   db.get("SELECT COUNT(*) AS cnt FROM member", (err, row) => {
